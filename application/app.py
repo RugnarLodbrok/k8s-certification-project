@@ -6,11 +6,11 @@ from flask import Flask
 
 app = Flask(__name__)
 
-redis_host = os.environ['DATABASE_URL']
-redis_password = os.environ['DATABASE_PASSWORD']
-redis_port = int(os.environ['DATABASE_PORT'])
-
-cache = redis.Redis(host=redis_host, password=redis_password, port=redis_port)
+cache = redis.Redis(
+    host=os.environ['DATABASE_URL'],
+    password=os.environ['DATABASE_PASSWORD'],
+    port=int(os.environ['DATABASE_PORT']),
+)
 
 
 def get_hit_count():

@@ -1,0 +1,6 @@
+dependencies:
+- name: redis
+  repository: https://charts.southbridge.ru/
+  version: 14.6.6
+digest: sha256:9f38124bfe86d8bce98377a935bfd2d596653317ac99bd83fc0913ef0a6a1725
+generated: "2023-04-25T15:42:31.356424+03:00"
