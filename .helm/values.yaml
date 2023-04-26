@@ -1,0 +1,23 @@
+# This is a YAML-formatted file.
+
+image: registry.slurm.io/s054045/k8s_dev_cert_project
+imageTag: master.1
+imagePullSecret: gitlab-registry-pull
+
+env:
+  DATABASE_URL: s054045-k8s-dev-cert-project-redis-headless
+  DATABASE_PASSWORD: ""
+  DATABASE_PORT: 6379
+
+service:
+  port: 5000
+
+ingress:
+  host: flask.s054045.edu.slurm.io
+
+redis:
+  master:
+    persistence:
+      existingClaim: redis-pvc
+  replica:
+    replicaCount: 0

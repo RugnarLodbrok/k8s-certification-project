@@ -1,0 +1,45 @@
+variables:
+  K8S_API_URL: https://172.16.237.2:6443
+  OPERATOR_IMAGE_PULL_SECRET: gitlab-registry-pull
+
+stages:
+  - build
+  - deploy
+
+build_n_push:
+  stage: build
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG.$CI_PIPELINE_ID application
+    - docker push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_REF_SLUG.$CI_PIPELINE_ID
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: centosadmin/kubernetes-helm:3.6.3
+  environment:
+    name: production
+  script:
+    - kubectl config set-cluster k8s --insecure-skip-tls-verify=true --server=$K8S_API_URL
+    - kubectl config set-credentials ci --token=$K8S_CI_TOKEN
+    - kubectl config set-context ci --cluster=k8s --user=ci
+    - kubectl config use-context ci
+    - kubectl -n $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME get secret $OPERATOR_IMAGE_PULL_SECRET
+      || kubectl -n $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME create secret docker-registry $OPERATOR_IMAGE_PULL_SECRET
+      --docker-server=$CI_REGISTRY
+      --docker-username=$CI_DEPLOY_USER
+      --docker-password="$CI_DEPLOY_PASSWORD"
+    - helm upgrade --install $CI_PROJECT_PATH_SLUG .helm
+      --set image=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+      --set imageTag=$CI_COMMIT_REF_SLUG.$CI_PIPELINE_ID
+      --set redis.auth.password=$REDIS_PASSWORD
+      --wait
+      --timeout 120s
+      --atomic
+      --debug
+      --namespace $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
+      --create-namespace
+  only:
+    - main
