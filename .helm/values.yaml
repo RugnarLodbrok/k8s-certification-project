@@ -5,7 +5,7 @@ imageTag: master.1
 imagePullSecret: gitlab-registry-pull
 
 env:
-  DATABASE_URL: s054045-k8s-dev-cert-project-redis-headless
+  DATABASE_URL: g054045-k8s-dev-cert-project-redis-master
   DATABASE_PASSWORD: "hruherfagfbd"
   DATABASE_PORT: 6379
 
