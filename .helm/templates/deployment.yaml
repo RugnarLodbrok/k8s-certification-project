@@ -23,8 +23,8 @@ spec:
         - name: {{ $key | quote }}
           value: {{ $val | quote }}
         {{- end }}
-        - name: "DATABASE_PASSWORD"
-          value: {{ .Values.redis.auth.password | quote }}
+#        - name: "DATABASE_PASSWORD"
+#          value: {{ .Values.redis.auth.password | quote }}
         name: application
         image: {{ .Values.image }}:{{ .Values.imageTag }}
         imagePullPolicy: IfNotPresent
