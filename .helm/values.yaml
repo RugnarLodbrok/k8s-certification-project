@@ -6,7 +6,7 @@ imagePullSecret: gitlab-registry-pull
 
 env:
   DATABASE_URL: s054045-k8s-dev-cert-project-redis-headless
-  DATABASE_PASSWORD: ""
+  DATABASE_PASSWORD: "hruherfagfbd"
   DATABASE_PORT: 6379
 
 service:
